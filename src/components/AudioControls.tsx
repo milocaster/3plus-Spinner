@@ -1,23 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { setMute, setVolume, initAudio } from '../utils/audio';
+import React, { useState } from 'react';
+import { setMute, setBgmVolume, setSeVolume, initAudio } from '../utils/audio';
 import './AudioControls.css';
 
 const AudioControls: React.FC = () => {
   const [muted, setMutedState] = useState(false);
-  const [volume, setVolumeState] = useState(0.5);
+  const [bgmVol, setBgmVolState] = useState(0.5);
+  const [seVol, setSeVolState] = useState(0.5);
 
   const handleMuteToggle = () => {
-    initAudio(); // ensure audio ctx is started if they click mute first
+    initAudio();
     const newMuted = !muted;
     setMutedState(newMuted);
     setMute(newMuted);
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    initAudio(); // ensure audio ctx is started
+  const handleBgmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    initAudio();
     const newVol = parseFloat(e.target.value);
-    setVolumeState(newVol);
-    setVolume(newVol);
+    setBgmVolState(newVol);
+    setBgmVolume(newVol);
+    if (muted && newVol > 0) {
+      setMutedState(false);
+      setMute(false);
+    }
+  };
+
+  const handleSeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    initAudio();
+    const newVol = parseFloat(e.target.value);
+    setSeVolState(newVol);
+    setSeVolume(newVol);
     if (muted && newVol > 0) {
       setMutedState(false);
       setMute(false);
@@ -29,15 +41,26 @@ const AudioControls: React.FC = () => {
       <button className="mute-btn" onClick={handleMuteToggle}>
         {muted ? '🔇' : '🔊'}
       </button>
-      <input 
-        type="range" 
-        min="0" 
-        max="1" 
-        step="0.05" 
-        value={muted ? 0 : volume} 
-        onChange={handleVolumeChange} 
-        className="volume-slider"
-      />
+      <div className="sliders-container">
+        <div className="slider-group">
+          <span className="slider-label">🎵 BGM</span>
+          <input 
+            type="range" min="0" max="1" step="0.05" 
+            value={muted ? 0 : bgmVol} 
+            onChange={handleBgmChange} 
+            className="volume-slider"
+          />
+        </div>
+        <div className="slider-group">
+          <span className="slider-label">🔊 SE</span>
+          <input 
+            type="range" min="0" max="1" step="0.05" 
+            value={muted ? 0 : seVol} 
+            onChange={handleSeChange} 
+            className="volume-slider"
+          />
+        </div>
+      </div>
     </div>
   );
 };

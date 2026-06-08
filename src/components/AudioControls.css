@@ -22,8 +22,26 @@
   transform: scale(1.1);
 }
 
+.sliders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-label {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  width: 45px;
+}
+
 .volume-slider {
-  width: 80px;
+  width: 70px;
   cursor: pointer;
   accent-color: var(--primary-color);
 }

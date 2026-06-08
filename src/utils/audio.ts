@@ -2,20 +2,20 @@
 
 const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
 let audioCtx: AudioContext | null = null;
-let masterGain: GainNode | null = null;
+let seGainNode: GainNode | null = null;
 
 let bgmAudio: HTMLAudioElement | null = null;
-let bgmSourceNode: MediaElementAudioSourceNode | null = null;
 
 let isMuted = false;
-let currentVolume = 0.5; // 0.0 to 1.0
+let bgmVolume = 0.5; // 0.0 to 1.0
+let seVolume = 0.5; // 0.0 to 1.0
 
 export const initAudio = () => {
   if (!audioCtx) {
     audioCtx = new AudioContext();
-    masterGain = audioCtx.createGain();
-    masterGain.connect(audioCtx.destination);
-    updateVolume();
+    seGainNode = audioCtx.createGain();
+    seGainNode.connect(audioCtx.destination);
+    updateVolumes();
   }
   
   if (audioCtx.state === 'suspended') {
@@ -26,13 +26,8 @@ export const initAudio = () => {
   if (!bgmAudio) {
     bgmAudio = new Audio('/audio/Monster Reel Rush x Spin Vault Loop (Mashup).wav');
     bgmAudio.loop = true;
-    bgmAudio.crossOrigin = "anonymous"; // Needed if served from different origin, good practice
-    
-    // Connect to Web Audio API
-    if (audioCtx && masterGain) {
-      bgmSourceNode = audioCtx.createMediaElementSource(bgmAudio);
-      bgmSourceNode.connect(masterGain);
-    }
+    bgmAudio.crossOrigin = "anonymous";
+    updateVolumes();
   }
 
   // Autoplay BGM
@@ -43,7 +38,7 @@ export const initAudio = () => {
 
 export const setMute = (mute: boolean) => {
   isMuted = mute;
-  updateVolume();
+  updateVolumes();
   
   if (bgmAudio) {
     if (mute) {
@@ -54,21 +49,31 @@ export const setMute = (mute: boolean) => {
   }
 };
 
-export const setVolume = (vol: number) => {
-  currentVolume = Math.max(0, Math.min(1, vol));
-  updateVolume();
+export const setBgmVolume = (vol: number) => {
+  bgmVolume = Math.max(0, Math.min(1, vol));
+  updateVolumes();
 };
 
-const updateVolume = () => {
-  if (masterGain && audioCtx) {
-    const effectiveVolume = isMuted ? 0 : currentVolume;
-    // Use exponential ramp for smoother volume changes, or set value directly
-    masterGain.gain.setTargetAtTime(effectiveVolume, audioCtx.currentTime, 0.1);
+export const setSeVolume = (vol: number) => {
+  seVolume = Math.max(0, Math.min(1, vol));
+  updateVolumes();
+};
+
+const updateVolumes = () => {
+  const effectiveBgmVolume = isMuted ? 0 : bgmVolume;
+  const effectiveSeVolume = isMuted ? 0 : seVolume;
+
+  if (bgmAudio) {
+    bgmAudio.volume = effectiveBgmVolume;
+  }
+
+  if (seGainNode && audioCtx) {
+    seGainNode.gain.setTargetAtTime(effectiveSeVolume, audioCtx.currentTime, 0.1);
   }
 };
 
 export const playTickSound = () => {
-  if (!audioCtx || !masterGain || isMuted) return;
+  if (!audioCtx || !seGainNode || isMuted) return;
   
   const osc = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
@@ -82,14 +87,14 @@ export const playTickSound = () => {
   gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
   
   osc.connect(gainNode);
-  gainNode.connect(masterGain);
+  gainNode.connect(seGainNode);
   
   osc.start();
   osc.stop(audioCtx.currentTime + 0.05);
 };
 
 export const playWinSound = (tier: string) => {
-  if (!audioCtx || !masterGain || isMuted) return;
+  if (!audioCtx || !seGainNode || isMuted) return;
   
   const osc = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
@@ -123,7 +128,7 @@ export const playWinSound = (tier: string) => {
   }
   
   osc.connect(gainNode);
-  gainNode.connect(masterGain);
+  gainNode.connect(seGainNode);
 };
 
 // We can simulate ticking by setting an interval that gradually slows down
