@@ -35,9 +35,9 @@ export const addSpinToHistory = (prize: Prize) => {
     // Add to beginning of array
     history.unshift(newRecord);
     
-    // Keep only the last 50
-    if (history.length > 50) {
-      history.length = 50;
+    // Store up to 10000 records to prevent localStorage overflow
+    if (history.length > 10000) {
+      history.length = 10000;
     }
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
