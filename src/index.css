@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --bg-color: #0b0f19; /* Very dark navy/black */
+  --text-color: #ffffff;
+  --primary-color: #0088cc; /* CH3 Blue */
+  --secondary-color: #00a651; /* CH3 Green */
+  --accent-color: #ee3124; /* CH3 Red */
+  
+  --tier-c: #9ca3af;
+  --tier-r: #0088cc;
+  --tier-sr: #ee3124;
+  --tier-ssr: #00a651;
+  --tier-ur: #f59e0b; /* Gold for UR */
+
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(0, 136, 204, 0.15), transparent 30%),
+    radial-gradient(circle at 85% 30%, rgba(0, 166, 81, 0.1), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(238, 49, 36, 0.1), transparent 40%);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+}

@@ -1,0 +1,94 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 450px;
+  padding: 2.5rem;
+  text-align: center;
+  border-top: 4px solid var(--prize-color);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--prize-color);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-header h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.modal-body {
+  margin: 2rem 0;
+}
+
+.prize-label {
+  font-size: 1.2rem;
+  color: #a1a1aa;
+  margin-bottom: 0.5rem;
+}
+
+.prize-name {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 15px currentColor;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.prize-tier {
+  font-size: 1rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.claim-btn {
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.claim-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+  box-shadow: 0 6px 20px var(--prize-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}

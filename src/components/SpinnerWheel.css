@@ -1,0 +1,151 @@
+.spinner-container {
+  position: relative;
+  width: 90vw;
+  max-width: 600px;
+  height: 90vw;
+  max-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.spinner-pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 40px solid var(--accent-color);
+  z-index: 10;
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.spinner-wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid var(--primary-color);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  /* Will be rotated via inline style */
+}
+
+.spinner-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.spinner-segment-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+.text-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+  /* Rotate -90deg so it points UP along the radius */
+  transform: rotate(-90deg) translateY(-50%);
+  width: 45%; /* Extend from center to 90% of radius */
+  text-align: right;
+  padding-right: 15px;
+  padding-left: 10px;
+  font-weight: 800;
+  font-size: clamp(0.7rem, 2.5vw, 1.2rem);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px currentColor, 0 2px 4px rgba(0,0,0,0.8);
+  white-space: nowrap;
+}
+
+.spinner-center {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: #0b0f19;
+  border-radius: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid var(--primary-color);
+  box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);
+  overflow: hidden;
+}
+
+.spinner-center-logo {
+  width: 70%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* LED Border Styles */
+.spinner-leds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  /* Make it slightly larger than the wheel to sit on the border */
+  transform: scale(1.02);
+}
+
+.spinner-led-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+.spinner-led {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background-color: var(--accent-color); /* Red */
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-color);
+  animation: blink 0.6s infinite alternate;
+}
+
+.spinner-led-wrapper:nth-child(even) .spinner-led {
+  background-color: var(--secondary-color); /* Green */
+  box-shadow: 0 0 10px var(--secondary-color);
+  animation-delay: 0.3s;
+}
+
+.spinner-led-wrapper:nth-child(3n) .spinner-led {
+  background-color: var(--primary-color); /* Blue */
+  box-shadow: 0 0 10px var(--primary-color);
+  animation-delay: 0.6s;
+}
+
+@keyframes blink {
+  0% { 
+    opacity: 0.3; 
+    filter: brightness(0.7); 
+    box-shadow: 0 0 5px currentColor;
+  }
+  100% { 
+    opacity: 1; 
+    filter: brightness(1.5); 
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; 
+  }
+}
