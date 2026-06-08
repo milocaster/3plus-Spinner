@@ -24,7 +24,8 @@ export const initAudio = () => {
 
   // Initialize BGM
   if (!bgmAudio) {
-    bgmAudio = new Audio('/audio/Monster Reel Rush x Spin Vault Loop (Mashup).wav');
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    bgmAudio = new Audio(`${baseUrl}audio/Monster Reel Rush x Spin Vault Loop (Mashup).wav`);
     bgmAudio.loop = true;
     bgmAudio.crossOrigin = "anonymous";
     updateVolumes();
