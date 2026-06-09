@@ -8,14 +8,15 @@ export interface SpinHistoryRecord {
   timestamp: string;
 }
 
-const STORAGE_KEY = '3plus_spinner_history';
+const HISTORY_STORAGE_KEY = '3plus_spinner_history';
+const PRIZES_STORAGE_KEY = '3plus_spinner_prizes';
 
 export const getSpinHistory = (): SpinHistoryRecord[] => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = localStorage.getItem(HISTORY_STORAGE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error('Failed to read spin history from localStorage', error);
+    console.error('Failed to load history', error);
     return [];
   }
 };
@@ -40,8 +41,33 @@ export const addSpinToHistory = (prize: Prize) => {
       history.length = 10000;
     }
     
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
   } catch (error) {
-    console.error('Failed to save spin history to localStorage', error);
+    console.error('Failed to save history', error);
+  }
+};
+
+export const getPrizes = (defaultFallback: Prize[]): Prize[] => {
+  try {
+    const data = localStorage.getItem(PRIZES_STORAGE_KEY);
+    if (data) {
+      // Validate data structure lightly
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    return defaultFallback;
+  } catch (error) {
+    console.error('Failed to load prizes', error);
+    return defaultFallback;
+  }
+};
+
+export const savePrizes = (prizes: Prize[]) => {
+  try {
+    localStorage.setItem(PRIZES_STORAGE_KEY, JSON.stringify(prizes));
+  } catch (error) {
+    console.error('Failed to save prizes', error);
   }
 };

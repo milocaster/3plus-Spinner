@@ -7,37 +7,45 @@ export interface Prize {
   color: string;
   dropRate: number; // probability percentage (0-100)
   segmentIndex: number; // 0 to N
+  quantity: number; // -1 for unlimited, 0 for out of stock, >0 for limited
 }
 
 // 4 C, 3 R, 2 SR, 2 SSR, 1 UR = 12 items total
 // To make it visually balanced, we will distribute them around the wheel.
-export const prizes: Prize[] = [
-  { id: 'C1', tier: 'C', name: 'Common 1', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 0 },
-  { id: 'R1', tier: 'R', name: 'Rare 1', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 1 },
-  { id: 'C2', tier: 'C', name: 'Common 2', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 2 },
-  { id: 'SR1', tier: 'SR', name: 'Super Rare 1', color: 'var(--tier-sr)', dropRate: 4, segmentIndex: 3 },
-  { id: 'C3', tier: 'C', name: 'Common 3', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 4 },
-  { id: 'SSR1', tier: 'SSR', name: 'SSR 1', color: 'var(--tier-ssr)', dropRate: 1.5, segmentIndex: 5 },
-  { id: 'R2', tier: 'R', name: 'Rare 2', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 6 },
-  { id: 'UR1', tier: 'UR', name: 'UR Prize', color: 'var(--tier-ur)', dropRate: 1, segmentIndex: 7 },
-  { id: 'C4', tier: 'C', name: 'Common 4', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 8 },
-  { id: 'SR2', tier: 'SR', name: 'Super Rare 2', color: 'var(--tier-sr)', dropRate: 4, segmentIndex: 9 },
-  { id: 'R3', tier: 'R', name: 'Rare 3', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 10 },
-  { id: 'SSR2', tier: 'SSR', name: 'SSR 2', color: 'var(--tier-ssr)', dropRate: 1.5, segmentIndex: 11 },
+export const defaultPrizes: Prize[] = [
+  { id: 'C1', tier: 'C', name: 'Common 1', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 0, quantity: -1 },
+  { id: 'R1', tier: 'R', name: 'Rare 1', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 1, quantity: -1 },
+  { id: 'C2', tier: 'C', name: 'Common 2', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 2, quantity: -1 },
+  { id: 'SR1', tier: 'SR', name: 'Super Rare 1', color: 'var(--tier-sr)', dropRate: 4, segmentIndex: 3, quantity: -1 },
+  { id: 'C3', tier: 'C', name: 'Common 3', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 4, quantity: -1 },
+  { id: 'SSR1', tier: 'SSR', name: 'SSR 1', color: 'var(--tier-ssr)', dropRate: 1.5, segmentIndex: 5, quantity: -1 },
+  { id: 'R2', tier: 'R', name: 'Rare 2', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 6, quantity: -1 },
+  { id: 'UR1', tier: 'UR', name: 'UR Prize', color: 'var(--tier-ur)', dropRate: 1, segmentIndex: 7, quantity: -1 },
+  { id: 'C4', tier: 'C', name: 'Common 4', color: 'var(--tier-c)', dropRate: 15, segmentIndex: 8, quantity: -1 },
+  { id: 'SR2', tier: 'SR', name: 'Super Rare 2', color: 'var(--tier-sr)', dropRate: 4, segmentIndex: 9, quantity: -1 },
+  { id: 'R3', tier: 'R', name: 'Rare 3', color: 'var(--tier-r)', dropRate: 8, segmentIndex: 10, quantity: -1 },
+  { id: 'SSR2', tier: 'SSR', name: 'SSR 2', color: 'var(--tier-ssr)', dropRate: 1.5, segmentIndex: 11, quantity: -1 },
 ];
 
-export const getRandomPrize = (): Prize => {
-  // Calculate total drop rate to normalize, though it should be ~96% here, let's normalize it to whatever the total is.
-  const totalDropRate = prizes.reduce((sum, p) => sum + p.dropRate, 0);
+export const getRandomPrize = (currentPrizes: Prize[]): Prize | null => {
+  // Filter out prizes that are out of stock
+  const availablePrizes = currentPrizes.filter(p => p.quantity !== 0);
+  
+  if (availablePrizes.length === 0) {
+    return null; // Handle case where everything is out of stock
+  }
+
+  // Calculate total drop rate to normalize mathematically
+  const totalDropRate = availablePrizes.reduce((sum, p) => sum + p.dropRate, 0);
   const random = Math.random() * totalDropRate;
   let cumulative = 0;
   
-  for (const prize of prizes) {
+  for (const prize of availablePrizes) {
     cumulative += prize.dropRate;
     if (random <= cumulative) {
       return prize;
     }
   }
   
-  return prizes[0]; // Fallback
+  return availablePrizes[0]; // Fallback
 };

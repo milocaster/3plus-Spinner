@@ -5,17 +5,20 @@ import SpinnerWheel from './components/SpinnerWheel';
 import PrizeModal from './components/PrizeModal';
 import RatesModal from './components/RatesModal';
 import HistoryModal from './components/HistoryModal';
+import SettingsModal from './components/SettingsModal';
 import AudioControls from './components/AudioControls';
-import { getRandomPrize, type Prize } from './utils/probabilities';
+import { getRandomPrize, defaultPrizes, type Prize } from './utils/probabilities';
 import { initAudio, playWinSound } from './utils/audio';
-import { addSpinToHistory } from './utils/storage';
+import { addSpinToHistory, getPrizes, savePrizes } from './utils/storage';
 
 function App() {
+  const [prizes, setPrizes] = useState<Prize[]>(() => getPrizes(defaultPrizes));
   const [spinTrigger, setSpinTrigger] = useState(0);
   const [targetPrize, setTargetPrize] = useState<Prize | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRatesOpen, setIsRatesOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
 
   // Initialize audio on any user interaction with the document if not already done
@@ -32,8 +35,21 @@ function App() {
     initAudio();
     
     // Determine the prize beforehand based on weighted probability
-    const prize = getRandomPrize();
+    const prize = getRandomPrize(prizes);
+    if (!prize) {
+      alert("All prizes are out of stock!");
+      return;
+    }
     setTargetPrize(prize);
+    
+    // Deduct inventory
+    if (prize.quantity > 0) {
+      const updatedPrizes = prizes.map(p => 
+        p.id === prize.id ? { ...p, quantity: p.quantity - 1 } : p
+      );
+      setPrizes(updatedPrizes);
+      savePrizes(updatedPrizes);
+    }
     
     // Trigger spin
     setIsSpinning(true);
@@ -96,6 +112,7 @@ function App() {
 
       <main className="spinner-section">
         <SpinnerWheel 
+          activePrizes={prizes.filter(p => p.quantity !== 0)}
           spinTrigger={spinTrigger} 
           targetPrize={targetPrize}
           isSpinning={isSpinning}
@@ -111,6 +128,9 @@ function App() {
         </button>
 
         <div className="action-buttons">
+          <button className="secondary-btn" onClick={() => setIsSettingsOpen(true)}>
+            ⚙️ Settings
+          </button>
           <button className="secondary-btn" onClick={() => setIsRatesOpen(true)}>
             Drop Rates
           </button>
@@ -127,11 +147,22 @@ function App() {
       />
       <RatesModal 
         isOpen={isRatesOpen} 
+        prizes={prizes}
         onClose={() => setIsRatesOpen(false)} 
       />
       <HistoryModal 
         isOpen={isHistoryOpen} 
         onClose={() => setIsHistoryOpen(false)} 
+      />
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        currentPrizes={prizes}
+        onSave={(newPrizes) => {
+          setPrizes(newPrizes);
+          savePrizes(newPrizes);
+          setIsSettingsOpen(false);
+        }}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );

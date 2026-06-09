@@ -1,17 +1,20 @@
 import React from 'react';
-import { prizes } from '../utils/probabilities';
+import { type Prize } from '../utils/probabilities';
 
 interface RatesModalProps {
   isOpen: boolean;
+  prizes: Prize[];
   onClose: () => void;
 }
 
-const RatesModal: React.FC<RatesModalProps> = ({ isOpen, onClose }) => {
+const RatesModal: React.FC<RatesModalProps> = ({ isOpen, prizes, onClose }) => {
   if (!isOpen) return null;
 
-  // Group prizes by tier to show combined rates, or just list all items
-  // Since we have multiple C's, let's list all 12 items for full transparency
-  const sortedPrizes = [...prizes].sort((a, b) => a.dropRate - b.dropRate);
+  // Need to filter active ones and calculate dynamic percentages
+  const activePrizes = prizes.filter(p => p.quantity !== 0);
+  const totalDropRate = activePrizes.reduce((sum, p) => sum + p.dropRate, 0);
+
+  const sortedPrizes = [...activePrizes].sort((a, b) => a.dropRate - b.dropRate);
 
   return (
     <div className="modal-overlay">
@@ -22,12 +25,15 @@ const RatesModal: React.FC<RatesModalProps> = ({ isOpen, onClose }) => {
         </div>
         <div className="modal-scroll-body">
           <ul className="rate-list">
-            {sortedPrizes.map(prize => (
-              <li key={prize.id} className="rate-item" style={{ borderLeftColor: prize.color }}>
-                <span className="rate-name" style={{ color: prize.color }}>{prize.name}</span>
-                <span className="rate-percent">{prize.dropRate.toFixed(2)}%</span>
-              </li>
-            ))}
+            {sortedPrizes.map(prize => {
+              const percentage = totalDropRate > 0 ? ((prize.dropRate / totalDropRate) * 100).toFixed(2) : '0.00';
+              return (
+                <li key={prize.id} className="rate-item" style={{ borderLeftColor: prize.color }}>
+                  <span className="rate-name" style={{ color: prize.color }}>{prize.name}</span>
+                  <span className="rate-percent">{percentage}%</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

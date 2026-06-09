@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './SpinnerWheel.css';
-import { prizes, type Prize } from '../utils/probabilities';
+import { type Prize } from '../utils/probabilities';
 import { playSpinningTicks } from '../utils/audio';
 
 interface SpinnerWheelProps {
+  activePrizes: Prize[];
   spinTrigger: number;
   targetPrize: Prize | null;
   isSpinning: boolean;
   onSpinComplete: () => void;
 }
 
-const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ spinTrigger, targetPrize, isSpinning, onSpinComplete }) => {
+const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ activePrizes, spinTrigger, targetPrize, isSpinning, onSpinComplete }) => {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
@@ -27,8 +28,11 @@ const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ spinTrigger, targetPrize, i
       // To land on segment i, we need the pointer to point to (i * 60) + 30 degrees (center of segment).
       // Since the wheel rotates, to put segment i at the top, we rotate by 360 - ((i * 60) + 30).
       
-      const segmentAngle = 360 / prizes.length;
-      const targetSegmentAngle = (targetPrize.segmentIndex * segmentAngle) + (segmentAngle / 2);
+      const targetIndex = activePrizes.findIndex(p => p.id === targetPrize.id);
+      if (targetIndex === -1) return; // Should not happen
+
+      const segmentAngle = 360 / activePrizes.length;
+      const targetSegmentAngle = (targetIndex * segmentAngle) + (segmentAngle / 2);
       const rotateTo = 360 - targetSegmentAngle;
       
       // Add extra spins (e.g., 5 full rotations = 1800 degrees)
@@ -56,7 +60,9 @@ const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ spinTrigger, targetPrize, i
 
   // Generate conic gradient dynamically based on number of prizes
   const generateConicGradient = () => {
-    const numSegments = prizes.length;
+    const numSegments = activePrizes.length;
+    if (numSegments === 0) return 'none';
+
     const segmentAngle = 360 / numSegments;
     let gradientParts: string[] = [];
     
@@ -91,8 +97,8 @@ const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ spinTrigger, targetPrize, i
         }}
       >
         <div className="spinner-inner">
-          {prizes.map((prize, index) => {
-            const segmentAngle = 360 / prizes.length;
+          {activePrizes.map((prize, index) => {
+            const segmentAngle = 360 / activePrizes.length;
             const rotationAngle = index * segmentAngle + (segmentAngle / 2);
             return (
               <div 
@@ -102,6 +108,11 @@ const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ spinTrigger, targetPrize, i
               >
                 <span className="text-content" style={{ color: prize.color }}>
                   {prize.name}
+                  {prize.quantity !== -1 && (
+                    <span style={{ fontSize: '0.6em', display: 'block', color: '#a1a1aa' }}>
+                      ({prize.quantity} left)
+                    </span>
+                  )}
                 </span>
               </div>
             );
