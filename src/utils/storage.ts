@@ -1,4 +1,5 @@
 import { type Prize } from './probabilities';
+import { saveHistoryToDB, savePrizesToDB, isDatabaseConnected } from './fileDatabase';
 
 export interface SpinHistoryRecord {
   id: string; // unique timestamp + random string
@@ -42,6 +43,10 @@ export const addSpinToHistory = (prize: Prize) => {
     }
     
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+
+    if (isDatabaseConnected()) {
+      saveHistoryToDB(history);
+    }
   } catch (error) {
     console.error('Failed to save history', error);
   }
@@ -69,5 +74,9 @@ export const savePrizes = (prizes: Prize[]) => {
     localStorage.setItem(PRIZES_STORAGE_KEY, JSON.stringify(prizes));
   } catch (error) {
     console.error('Failed to save prizes', error);
+  }
+  
+  if (isDatabaseConnected()) {
+    savePrizesToDB(prizes);
   }
 };

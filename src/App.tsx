@@ -10,9 +10,11 @@ import AudioControls from './components/AudioControls';
 import { getRandomPrize, defaultPrizes, type Prize } from './utils/probabilities';
 import { initAudio, playWinSound } from './utils/audio';
 import { addSpinToHistory, getPrizes, savePrizes } from './utils/storage';
+import { connectDatabaseFolder, loadPrizesFromDB } from './utils/fileDatabase';
 
 function App() {
   const [prizes, setPrizes] = useState<Prize[]>(() => getPrizes(defaultPrizes));
+  const [dbConnected, setDbConnected] = useState(false);
   const [spinTrigger, setSpinTrigger] = useState(0);
   const [targetPrize, setTargetPrize] = useState<Prize | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,6 +104,16 @@ function App() {
     setTargetPrize(null);
   };
 
+  const handleConnectDb = async () => {
+    const success = await connectDatabaseFolder();
+    if (success) {
+      const loadedPrizes = await loadPrizesFromDB();
+      setPrizes(loadedPrizes);
+      setDbConnected(true);
+      alert('Database connected successfully!\nSettings and logs will now be saved to the selected folder.');
+    }
+  };
+
   return (
     <div className="app-container">
       <AudioControls />
@@ -130,6 +142,16 @@ function App() {
         </button>
 
         <div className="action-buttons">
+          <button 
+            className="secondary-btn db-btn" 
+            onClick={handleConnectDb}
+            style={{ 
+              borderColor: dbConnected ? '#10b981' : '#f59e0b',
+              color: dbConnected ? '#10b981' : '#f59e0b'
+            }}
+          >
+            {dbConnected ? '✅ DB Connected' : '🔗 Connect DB Folder'}
+          </button>
           <button className="secondary-btn" onClick={() => setIsSettingsOpen(true)}>
             ⚙️ Settings
           </button>
