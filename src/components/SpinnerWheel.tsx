@@ -67,7 +67,13 @@ const SpinnerWheel: React.FC<SpinnerWheelProps> = ({ activePrizes, spinTrigger, 
     let gradientParts: string[] = [];
     
     for (let i = 0; i < numSegments; i++) {
-      const color = i % 2 === 0 ? '#1f2937' : '#111827';
+      let color = i % 2 === 0 ? '#1f2937' : '#111827';
+      
+      // If there's an odd number of segments, the last segment (even index) 
+      // will clash with the first segment (index 0). Give it a 3rd distinct shade.
+      if (numSegments % 2 !== 0 && i === numSegments - 1) {
+        color = '#182235';
+      }
       const startAngle = i * segmentAngle;
       const endAngle = (i + 1) * segmentAngle;
       gradientParts.push(`${color} ${startAngle}deg ${endAngle}deg`);
