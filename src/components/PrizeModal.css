@@ -71,10 +71,12 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.claim-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.2);
-  box-shadow: 0 6px 20px var(--prize-color);
+@media (hover: hover) {
+  .claim-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+    box-shadow: 0 6px 20px var(--prize-color);
+  }
 }
 
 @keyframes fadeIn {

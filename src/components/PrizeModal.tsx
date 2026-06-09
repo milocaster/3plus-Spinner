@@ -12,8 +12,12 @@ const PrizeModal: React.FC<PrizeModalProps> = ({ prize, isOpen, onClose }) => {
   if (!isOpen || !prize) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content glass-panel" style={{ '--prize-color': prize.color } as React.CSSProperties}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-content glass-panel" 
+        style={{ '--prize-color': prize.color } as React.CSSProperties}
+        onClick={e => e.stopPropagation()}
+      >
         <div className="modal-header">
           <h2>Congratulations!</h2>
         </div>

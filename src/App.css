@@ -75,9 +75,11 @@
   letter-spacing: 2px;
 }
 
-.spin-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+@media (hover: hover) {
+  .spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+  }
 }
 
 .spin-btn:active:not(:disabled) {
@@ -233,6 +235,8 @@
   transition: all 0.2s;
 }
 
-.secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+@media (hover: hover) {
+  .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 }
