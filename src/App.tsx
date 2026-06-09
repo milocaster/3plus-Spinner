@@ -45,7 +45,7 @@ function App() {
     // Trigger spin
     setIsSpinning(true);
     setSpinTrigger(prev => prev + 1);
-  }, [isSpinning]);
+  }, [isSpinning, prizes]);
 
   const handleSpinComplete = useCallback(() => {
     setIsSpinning(false);
