@@ -42,15 +42,6 @@ function App() {
     }
     setTargetPrize(prize);
     
-    // Deduct inventory
-    if (prize.quantity > 0) {
-      const updatedPrizes = prizes.map(p => 
-        p.id === prize.id ? { ...p, quantity: p.quantity - 1 } : p
-      );
-      setPrizes(updatedPrizes);
-      savePrizes(updatedPrizes);
-    }
-    
     // Trigger spin
     setIsSpinning(true);
     setSpinTrigger(prev => prev + 1);
@@ -63,6 +54,17 @@ function App() {
     if (targetPrize) {
       addSpinToHistory(targetPrize); // Save to localStorage
       playWinSound(targetPrize.tier);
+      
+      // Deduct inventory AFTER the spin is visually complete
+      if (targetPrize.quantity > 0) {
+        setPrizes(currentPrizes => {
+          const updated = currentPrizes.map(p => 
+            p.id === targetPrize.id ? { ...p, quantity: p.quantity - 1 } : p
+          );
+          savePrizes(updated);
+          return updated;
+        });
+      }
     }
     
     // Trigger confetti if it's a high tier prize
