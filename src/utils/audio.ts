@@ -6,7 +6,7 @@ let seGainNode: GainNode | null = null;
 
 let bgmAudio: HTMLAudioElement | null = null;
 
-let isMuted = false;
+let isMuted = true;
 let bgmVolume = 0.5; // 0.0 to 1.0
 let seVolume = 0.5; // 0.0 to 1.0
 

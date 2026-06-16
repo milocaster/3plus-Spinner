@@ -58,6 +58,21 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, currentPrizes, on
     onSave(normalized);
   };
 
+  const handleResetData = () => {
+    const confirm1 = window.confirm("คุณแน่ใจหรือไม่ที่จะลบข้อมูลทั้งหมด? (Are you sure you want to delete all data?)");
+    if (confirm1) {
+      const confirm2 = window.confirm("🚨 คำเตือนสุดท้าย: ข้อมูลประวัติและจำนวนคงเหลือทั้งหมดจะหายไป กู้คืนไม่ได้ ยืนยันที่จะลบข้อมูลอีกครั้งหรือไม่?");
+      if (confirm2) {
+        // We will call a global reset function or dispatch an event, 
+        // or just pass it via props. We can import resetAllData directly.
+        import('../utils/storage').then(({ resetAllData }) => {
+          resetAllData();
+          window.location.reload();
+        });
+      }
+    }
+  };
+
   // Convert custom hex colors to CSS vars if they match, or just use the color directly.
   // We'll let users pick any hex color.
 
@@ -154,9 +169,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, currentPrizes, on
           </button>
         </div>
 
-        <div className="modal-footer">
-          <button className="cancel-btn" onClick={onClose}>Cancel</button>
-          <button className="save-btn" onClick={handleSave}>Save & Update Wheel</button>
+        <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <div>
+            <button 
+              className="cancel-btn" 
+              style={{ backgroundColor: '#ef4444', color: 'white', borderColor: '#ef4444' }}
+              onClick={handleResetData}
+            >
+              🗑️ Reset All Data
+            </button>
+          </div>
+          <div>
+            <button className="cancel-btn" onClick={onClose}>Cancel</button>
+            <button className="save-btn" onClick={handleSave}>Save & Update Wheel</button>
+          </div>
         </div>
       </div>
     </div>

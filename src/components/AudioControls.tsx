@@ -3,7 +3,7 @@ import { setMute, setBgmVolume, setSeVolume, initAudio } from '../utils/audio';
 import './AudioControls.css';
 
 const AudioControls: React.FC = () => {
-  const [muted, setMutedState] = useState(false);
+  const [muted, setMutedState] = useState(true);
   const [bgmVol, setBgmVolState] = useState(0.5);
   const [seVol, setSeVolState] = useState(0.5);
 
